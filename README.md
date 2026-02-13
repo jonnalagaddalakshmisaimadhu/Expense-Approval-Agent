@@ -1,65 +1,92 @@
 # Expense Approval Agent 🤖
 
-An intelligent, multi-agent system for automating expense approvals. This project demonstrates a **Local Agentic RAG** architecture using open-source models to process receipts, verify policy compliance, and detect fraud—all without relying on expensive cloud APIs.
+> A **Local-First, Privacy-Preserving** Agentic AI system for automating corporate expense approvals. 
 
-## 🌟 Features
+![Project Status](https://img.shields.io/badge/Status-Completed-success)
+![Stack](https://img.shields.io/badge/Stack-Next.js_|_Ollama_|_Tesseract-blue)
 
-*   **OCR Agent**: Extracts text from receipt images using **Tesseract.js** (Local OCR).
-*   **RAG Agent**: Retrieves relevant company policies dynamically from a local knowledge base (`policies.json`).
-*   **Reasoner Agent**: Uses a local LLM (**Ollama + Mistral**) to analyze the receipt against the retrieved policies.
-*   **Fraud Detection**: Detects duplicate submissions and anomalies.
-*   **Resilient Architecture**: Includes robust fallbacks (Mock/Rule-based) to ensure the demo works even if local models are slow or unresponsive.
+This project demonstrates a fully functional **Agentic RAG (Retrieval-Augmented Generation)** pipeline that runs entirely on your local machine using open-source models. It automates receipt processing, policy verification, and fraud detection without sending sensitive financial data to the cloud.
+
+## 🌟 Key Features
+
+*   **🕵️‍♂️ Local Perception (OCR Agent)**: Extracts text from receipts using **Tesseract.js** directly in the backend.
+*   **📚 Context Awareness (RAG Agent)**: Dynamically retrieves relevant company policies from a local knowledge base based on receipt content.
+*   **🧠 Intelligent Reasoning (Reasoner Agent)**: Uses **Ollama + Mistral** to perform semantic analysis, comparing the expense against retrieved policies to make approval decisions.
+*   **🛡️ Robust Resiliency**: Features a custom "Mock Fallback" system. If local AI models are slow or offline, the system degrades gracefully to strict rule-based logic, ensuring the demo **never fails**.
+*   **🚨 Fraud Detection**: Automatically flags duplicate receipts and suspicious patterns.
+
+---
 
 ## 🏗️ Architecture
 
-1.  **Perception**: The receipt image is processed by the **OCR Agent** to extract raw text.
-2.  **Retrieval**: The **RAG Agent** queries the policy database to find rules relevant to the specific expense keywords (e.g., "taxi", "dinner").
-3.  **Reasoning**: The **Reasoner Agent** (Mistral) receives the receipt text and 3-4 specific policy clauses. It "thinks" about whether the expense is compliant.
-4.  **Decision**: The output is routed (Auto-Approve, Manager Review, or Reject) based on the risk score and amount.
+The system employs a multi-agent orchestration pattern:
+
+1.  **Receipt Upload** -> **OCR Agent** (Extracts Text)
+2.  **Text** -> **RAG Agent** (Fetches Policy Context)
+3.  **Context + Text** -> **Reasoner Agent** (LLM Decision)
+4.  **Decision** -> **Approval Router** (Final Verdict)
+
+👉 [Read full Architecture Documentation](docs/architecture.md)
+
+---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
-*   **Node.js** (v18 or higher)
-*   **Ollama** (for local LLM reasoning)
-    *   Download from [ollama.com](https://ollama.com)
-    *   Run `ollama pull mistral`
+*   **Node.js** (v18+)
+*   **Ollama**: [Download Here](https://ollama.com) (Required for local AI reasoning)
 
 ### Installation
 
-1.  Clone the repository:
+1.  **Clone the Repository**
     ```bash
     git clone https://github.com/jonnalagaddalakshmisaimadhu/Expense-Approval-Agent.git
     cd Expense-Approval-Agent
     ```
 
-2.  Install dependencies:
+2.  **Install Dependencies**
     ```bash
     npm install
     ```
 
-3.  Start the Local LLM Server:
-    ```bash
-    ollama serve
-    ```
+3.  **Setup Local AI (Ollama)**
+    *   Pull the Mistral model:
+        ```bash
+        ollama pull mistral
+        ```
+    *   Start the Ollama server:
+        ```bash
+        ollama serve
+        ```
 
-4.  Run the Application:
+4.  **Run the Application**
     ```bash
     npm run dev
     ```
+    Open [http://localhost:3000](http://localhost:3000) (or the port shown in terminal).
 
-5.  Open [http://localhost:3000](http://localhost:3000) to view the agent in action.
+---
 
-## 🛠️ Tech Stack
+## 💡 How It Works (Demo Guide)
 
-*   **Frontend**: Next.js (React), Tailwind CSS, Framer Motion
-*   **Backend**: Next.js API Routes
-*   **AI/ML**: Tesseract.js (OCR), Ollama/Mistral (LLM)
+1.  **Upload a Receipt**: The System accepts images. Use a sample receipt for a meal or travel.
+2.  **Watch the Agents**:
+    *   **Extracted Data**: Shows exactly what the OCR read.
+    *   **Retrieved Policies**: Shows which specific rules were applied.
+    *   **Decision**: Shows the Local AI's approval verdict and reasoning.
+3.  **Test Resiliency**: Stop the `ollama serve` process and upload again. The system will switch to "Resilient Fallback Mode" and still provide a valid result!
 
-## 📸 Screenshots
+---
 
-*(Add screenshots of your dashboard here)*
+## 🛠️ Technology Stack
+
+*   **Frontend**: Next.js 14 (App Router), Tailwind CSS, Lucide Icons
+*   **Backend**: Next.js API Routes (Serverless Functions)
+*   ** AI Models**:
+    *   **Vision**: Tesseract.js (WASM)
+    *   **LLM**: Mistral 7B (via Ollama)
+*   **Orchestration**: Custom Agentic Workflow in TypeScript
 
 ## 📄 License
 
