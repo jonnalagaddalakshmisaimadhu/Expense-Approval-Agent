@@ -1,0 +1,22 @@
+[
+  {
+    "id": "travel_3_2",
+    "title": "Meal Limit",
+    "text": "Meals above $50 (approx. ₹4000) require manager approval."
+  },
+  {
+    "id": "office_1_1",
+    "title": "Office Supplies",
+    "text": "Office supplies under $50 (approx. ₹4000) are auto-approved."
+  },
+  {
+    "id": "transport_2_1",
+    "title": "Cab Reimbursement",
+    "text": "Cab expenses are allowed only for official travel. Uber/Lyft/Taxi reimbursable."
+  },
+  {
+    "id": "alcohol_policy",
+    "title": "Alcohol Policy",
+    "text": "Alcohol is not reimbursable unless part of a client entertainment event with prior approval."
+  }
+]
