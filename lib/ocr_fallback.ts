@@ -1,22 +1,27 @@
 
 import Tesseract from 'tesseract.js';
+import path from 'path';
 
-export async function extractTextFromImage(base64Image: string, mimeType: string = "image/png"): Promise<any> {
+export async function extractTextFallback(base64Image: string, mimeType: string = "image/png"): Promise<any> {
     try {
         const dataUri = `data:${mimeType};base64,${base64Image}`;
+        const langPath = path.join(process.cwd());
 
         const workerPromise = Tesseract.recognize(
             dataUri,
             'eng',
-            { logger: () => { } }
+            {
+                langPath: langPath,
+                logger: () => { },
+                errorHandler: (err) => console.error("Tesseract Worker Error:", err)
+            }
         );
 
         const timeoutPromise = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error("OCR Timeout")), 30000)
+            setTimeout(() => reject(new Error("OCR Timeout (60s)")), 60000)
         );
 
         const result: any = await Promise.race([workerPromise, timeoutPromise]);
-
         const text = result.data.text;
 
         const totalMatch = text.match(/(\$|€|£|¥|₹)\s?(\d{1,3}(,\d{3})*(\.\d{2})?)/);
@@ -25,8 +30,6 @@ export async function extractTextFromImage(base64Image: string, mimeType: string
 
         const dateMatch = text.match(/(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})|(\d{4}[/-]\d{1,2}[/-]\d{1,2})/);
         const date = dateMatch ? dateMatch[0] : new Date().toISOString().split('T')[0];
-
-        const lines = text.split('\n').filter((line: string) => line.trim().length > 3);
 
         return {
             text: text,
@@ -38,15 +41,8 @@ export async function extractTextFromImage(base64Image: string, mimeType: string
             category: "General"
         };
 
-    } catch (error) {
-        return {
-            text: "Mock Receipt Text: Uber Ride to Airport. Total: $45. Date: 2025-10-10.",
-            merchant: "Uber (Mock)",
-            date: "2025-10-10",
-            total: 45.00,
-            currency: "$",
-            items: [{ name: "Ride", price: 45.00 }],
-            category: "Travel"
-        };
+    } catch (error: any) {
+        console.error("OCR Fallback Error:", error);
+        throw new Error(`OCR Failed: ${error.message}`);
     }
 }
